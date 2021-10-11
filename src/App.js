@@ -1,56 +1,74 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { Component } from "react";
-import { Statistic } from "./Statistic/Statistic";
+import { Feedback } from "./components/Feedback/Feedback";
+import { Statistic } from "./components/Statistic/Statistic";
 
 class App extends Component {
   state = {
     good: 0,
     neutral: 0,
     bad: 0,
-    total: 0,
-    positivePercentage: 0,
   };
 
-  countTotalFeedback = () => {
-    const { good, neutral, bad, total } = this.state;
-    this.setState({ total: 2 });
+  feedbackGood = () => {
+    this.setState((prevState) => {
+      const { good } = this.state;
+      return {
+        good: Number(`${Number(good) + 1}`),
+      };
+    });
   };
-  countPositiveFeedbackPercentage = () => {
-    const { good, total } = this.state;
-    this.setState({ positivePercentage: (good * 100) / total });
+  feedbackNeutral = () => {
+    this.setState((prevState) => {
+      const { neutral } = this.state;
+      return {
+        neutral: Number(`${Number(neutral) + 1}`),
+      };
+    });
   };
-
-  handleIncrementGood = () => {
-    this.setState({ good: this.state.good + 1 });
+  feedbackBad = () => {
+    this.setState((prevState) => {
+      const { bad } = this.state;
+      return {
+        bad: Number(`${Number(bad) + 1}`),
+      };
+    });
   };
-  handleIncrementNeutral = () => {
-    this.setState({ neutral: this.state.neutral + 1 });
+  totalFeedback = () => {
+    const { good, neutral, bad } = this.state;
+    const total = Number(`${Number(good) + Number(neutral) + Number(bad)}`);
+    return total;
   };
-  handleIncrementBad = () => {
-    this.setState({ bad: this.state.bad + 1 });
+  positiveFeedbackPercentage = () => {
+    const { good } = this.state;
+    const positivePercentage = Math.round(
+      (100 * Number(good)) / this.totalFeedback()
+    );
+    return positivePercentage;
   };
   render() {
-    const { good, neutral, bad, total, positivePercentage } = this.state;
+    const { good, neutral, bad } = this.state;
     const {
-      handleIncrementGood,
-      handleIncrementNeutral,
-      handleIncrementBad,
-      countTotalFeedback,
-      countPositiveFeedbackPercentage,
+      totalFeedback,
+      positiveFeedbackPercentage,
+      feedbackGood,
+      feedbackNeutral,
+      feedbackBad,
     } = this;
     return (
       <div className="App">
         <header className="App-header">
+          <Feedback
+            options={["Good", "Neutral", "Bad"]}
+            onLeaveFeedback={[feedbackGood, feedbackNeutral, feedbackBad]}
+          />
           <Statistic
             good={good}
             neutral={neutral}
             bad={bad}
-            handleIncrementGood={handleIncrementGood}
-            handleIncrementNeutral={handleIncrementNeutral}
-            handleIncrementBad={handleIncrementBad}
-            total={countTotalFeedback}
-            positivePercentage={countPositiveFeedbackPercentage}
+            total={totalFeedback()}
+            positivePercentage={positiveFeedbackPercentage()}
           />
         </header>
       </div>
