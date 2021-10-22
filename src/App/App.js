@@ -12,30 +12,13 @@ class App extends Component {
     bad: 0,
   };
 
-  feedbackGood = () => {
-    this.setState((prevState) => {
-      const { good } = this.state;
-      return {
-        good: good + 1,
-      };
-    });
+  handleCount = (e) => {
+    const name = e.currentTarget.name;
+    this.setState((prevState) => ({
+      [name]: prevState[name] + 1,
+    }));
   };
-  feedbackNeutral = () => {
-    this.setState((prevState) => {
-      const { neutral } = this.state;
-      return {
-        neutral: neutral + 1,
-      };
-    });
-  };
-  feedbackBad = () => {
-    this.setState((prevState) => {
-      const { bad } = this.state;
-      return {
-        bad: bad + 1,
-      };
-    });
-  };
+
   totalFeedback = () => {
     const { good, neutral, bad } = this.state;
     const total = good + neutral + bad;
@@ -43,29 +26,23 @@ class App extends Component {
   };
   positivePercentage = () => {
     const { good } = this.state;
-    const positivePercentage = Math.round((100 * good) / this.totalFeedback());
+    const positivePercentage = Math.round((good / this.totalFeedback()) * 100);
     return positivePercentage;
   };
   render() {
     const { good, neutral, bad } = this.state;
-    const {
-      totalFeedback,
-      positivePercentage,
-      feedbackGood,
-      feedbackNeutral,
-      feedbackBad,
-    } = this;
+    const { totalFeedback, positivePercentage, handleCount } = this;
     return (
       <div className="App">
         <header className="App-header">
           <Section title={"Please leave your feedback"}>
             <Feedback
-              options={["Good", "Neutral", "Bad"]}
-              onLeaveFeedback={[feedbackGood, feedbackNeutral, feedbackBad]}
+              options={["good", "neutral", "bad"]}
+              onLeaveFeedback={handleCount}
             />
           </Section>
           {this.totalFeedback() > 0 ? (
-            <Section title={"Statistics"}>
+            <Section title="Statistics">
               <Statistic
                 good={good}
                 neutral={neutral}
